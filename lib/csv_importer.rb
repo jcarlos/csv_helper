@@ -5,10 +5,10 @@ module CSVHelper
     def self.import csv_filename, required_fields
       csv = CSV.open(csv_filename, :headers => true)
       csv.read
-      missing_fields = Array.new
+      missing_fields = []
       required_fields.each do |required|
         unless csv.headers.include? required
-          missing_fields << "#{required}"
+          missing_fields << required.to_s
         end
       end
       raise "Field(s) #{missing_fields.join(', ')} missing in the CSV file #{csv_filename}" unless missing_fields.empty?
