@@ -1,5 +1,8 @@
+source 'https://rubygems.org'
+
 group :development do
   gem 'pry', require: false
+  gem 'guard-rubocop', require: false
 end
 
 group :test do
