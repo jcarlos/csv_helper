@@ -3,7 +3,7 @@ module CSVHelper
     require 'csv'
 
     def self.import csv_filename, required_fields
-      csv = CSV.open(csv_filename, :headers => true)
+      csv = CSV.open(csv_filename, :headers => true, encoding: "windows-1252:utf-8")
       csv.read
       missing_fields = []
       required_fields.each do |required|
