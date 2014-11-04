@@ -3,7 +3,7 @@ module CSVHelper
     require 'csv'
 
     def self.import csv_filename, required_fields
-      csv = CSV.open(csv_filename, :headers => true, encoding: "windows-1252:utf-8")
+      csv = CSV.open(csv_filename, :headers => true, encoding: 'windows-1252:utf-8')
       csv.read
       missing_fields = []
       required_fields.each do |required|
@@ -11,7 +11,10 @@ module CSVHelper
           missing_fields << required.to_s
         end
       end
-      raise "Field(s) #{missing_fields.join(', ')} missing in the CSV file #{csv_filename}" unless missing_fields.empty?
+      unless missing_fields.empty?
+        error_message = "Field(s) #{missing_fields.join(', ')} missing in the CSV file #{csv_filename}"
+        fail ArgumentError, error_message
+      end
       csv.rewind
       csv
     end

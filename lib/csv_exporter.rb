@@ -29,7 +29,10 @@ module CSVHelper
       @headers.each do |col|
         missing_cols << col unless row.include? col
       end
-      raise ArgumentError, "Missing required columns: #{missing_cols.join(', ')}" unless missing_cols.empty?
+      unless missing_cols.empty?
+        error_message = "Missing required columns: #{missing_cols.join(', ')}"
+        fail ArgumentError, error_message
+      end
     end
   end
 end
