@@ -1,11 +1,17 @@
 require 'spec_helper'
 
+# Module containing CSVImporter and CSVExporter
 module CSVHelper
   describe CSVImporter do
 
     describe 'returns a csv object after importing a csv file' do
       let(:csv) do
-        headers_required = %w('col_a1', 'col_a2', 'col_a3', 'col_a4')
+        headers_required = %w(
+          'col_a1',
+          'col_a2',
+          'col_a3',
+          'col_a4'
+        )
         CSVImporter.import('spec/fixtures/sample_csv.csv', headers_required)
       end
 
@@ -20,15 +26,23 @@ module CSVHelper
     end
 
     it 'complains about required rows missing' do
-      headers_required = %w('col_a1', 'col_a2', 'col_missing_1', 'col_a3', 'col_missing_2', 'col_a4')
-      error_message = 'Field(s) col_missing_1, col_missing_2 missing in the CSV file spec/fixtures/sample_csv.csv'
+      headers_required = %w(
+        col_a1,
+        col_a2,
+        col_missing_1,
+        col_a3,
+        col_missing_2,
+        col_a4
+      )
+      error_message = 'Field(s) col_missing_1, col_missing_2 missing in the' \
+        'CSV file spec/fixtures/sample_csv.csv'
       expect do
-        CSVImporter.import 'spec/fixtures/sample_csv.csv', headers_required 
+        CSVImporter.import 'spec/fixtures/sample_csv.csv', headers_required
       end.to raise_error RuntimeError, error_message
     end
 
-    it "doesn't complain if the csv file contains additional rows not required" do
-      headers_required = %w('col_a1', 'col_a4')
+    it 'csv file can have additional rows other than the required' do
+      headers_required = %w(col_a1, col_a4)
       CSVImporter.import('spec/fixtures/sample_csv.csv', headers_required)
     end
 

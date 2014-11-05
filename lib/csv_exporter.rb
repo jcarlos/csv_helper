@@ -1,8 +1,10 @@
+# Module containing CSVImporter and CSVExporter
 module CSVHelper
+  # Class to make sure a CSV is exported with the provided required columns
   class CSVExporter
     require 'csv'
 
-    def initialize filename, headers, append
+    def initialize(filename, headers, append)
       @headers = headers
       if append
         @csv = CSV.open(filename, 'ab')
@@ -13,9 +15,9 @@ module CSVHelper
       @csv.flush
     end
 
-    def add_row row
+    def add_row(row)
       check_for_required_columns row
-      line = Array.new
+      line = []
       @headers.each do |header|
         line << row[header]
       end
@@ -24,15 +26,15 @@ module CSVHelper
     end
 
     private
-    def check_for_required_columns row
+
+    def check_for_required_columns(row)
       missing_cols = []
       @headers.each do |col|
         missing_cols << col unless row.include? col
       end
-      unless missing_cols.empty?
-        error_message = "Missing required columns: #{missing_cols.join(', ')}"
-        fail ArgumentError, error_message
-      end
+      cols_are_missing = missing_cols.empty? ? false : true
+      error_message = "Missing required columns: #{missing_cols.join(', ')}"
+      fail ArgumentError, error_message if cols_are_missing
     end
   end
 end
