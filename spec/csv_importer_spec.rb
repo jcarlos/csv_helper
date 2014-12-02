@@ -4,47 +4,83 @@ require 'spec_helper'
 module CSVHelper
   describe CSVImporter do
 
-    describe 'returns a csv object after importing a csv file' do
-      let(:csv) do
-        headers_required = %w(
-          'col_a1',
-          'col_a2',
-          'col_a3',
-          'col_a4'
-        )
-        CSVImporter.import('spec/fixtures/sample_csv.csv', headers_required)
+    let(:required_headers) do
+      %w(
+        col_a1
+        col_a2
+        col_a3
+        col_a4
+      )
+    end
+
+    let(:csv_importer) do
+      CSVImporter.new('spec/fixtures/sample_csv.csv', required_headers)
+    end
+
+    it '#filename' do
+      expect(csv_importer.filename).to eq 'spec/fixtures/sample_csv.csv'
+    end
+
+    describe '#encoding' do
+      it 'has default encoding' do
+        expect(csv_importer.encoding).to eq 'windows-1252:utf-8'
       end
 
+      it 'has a specified encoding' do
+        csv_importer = CSVImporter.new(
+          'spec/fixtures/sample_csv.csv',
+          required_headers,
+          'utf8'
+        )
+        expect(csv_importer.encoding).to eq 'utf8'
+      end
+    end
+
+    describe '#csv' do
       it 'returns a csv object' do
-        csv.should be_a_kind_of CSV
+        expect(csv_importer.csv).to be_a_kind_of CSV
       end
 
       it 'has 3 lines in the csv file as per fixture file' do
-        csv.read
-        csv.lineno.should eq 3
+        csv_importer.csv.read
+        expect(csv_importer.csv.lineno).to eq 3
       end
     end
 
-    it 'complains about required rows missing' do
-      headers_required = %w(
-        col_a1,
-        col_a2,
-        col_missing_1,
-        col_a3,
-        col_missing_2,
-        col_a4
-      )
-      error_message = 'Field(s) col_missing_1, col_missing_2 missing in the' \
-        'CSV file spec/fixtures/sample_csv.csv'
-      expect do
-        CSVImporter.import 'spec/fixtures/sample_csv.csv', headers_required
-      end.to raise_error RuntimeError, error_message
+    it 'doesnt have missing headers' do
+      expect(csv_importer).not_to be_missing_fields
     end
 
-    it 'csv file can have additional rows other than the required' do
-      headers_required = %w(col_a1, col_a4)
-      CSVImporter.import('spec/fixtures/sample_csv.csv', headers_required)
-    end
+    describe 'missing required fields' do
+      let(:csv_importer) do
+        required_headers = %w(
+          col_a1
+          col_a2
+          col_missing_1
+          col_a3
+          col_missing_2
+          col_a4
+        )
+        CSVImporter.new(
+          'spec/fixtures/sample_csv.csv',
+          required_headers
+        )
+      end
 
+      it 'missing_fields?' do
+        expect(csv_importer).to be_missing_fields
+      end
+
+      it 'returns array of missing fields' do
+        expect(csv_importer.missing_fields)
+          .to eq %w(col_missing_1 col_missing_2)
+      end
+
+      it 'has a predefined message for missing_fields' do
+        missing_fields_message = 'Field(s) col_missing_1, '\
+        'col_missing_2 missing in the CSV file spec/fixtures/sample_csv.csv'
+        expect(csv_importer.missing_fields_message).to eq missing_fields_message
+      end
+    end
   end
 end

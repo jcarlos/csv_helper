@@ -2,7 +2,7 @@ require 'spec_helper'
 
 # Module containing CSVImporter and CSVExporter
 module CSVHelper
-  describe CSVExporter do
+  xdescribe CSVExporter do
     let(:csv_mock) { mock('csv_mock') }
 
     it 'creates a csv in append mode' do
