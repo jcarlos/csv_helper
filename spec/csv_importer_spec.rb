@@ -48,10 +48,10 @@ module CSVHelper
     end
 
     it 'doesnt have missing headers' do
-      expect(csv_importer).not_to be_missing_fields
+      expect(csv_importer).not_to be_missing_headers
     end
 
-    describe 'missing required fields' do
+    describe 'missing required headers' do
       let(:csv_importer) do
         required_headers = %w(
           col_a1
@@ -67,19 +67,20 @@ module CSVHelper
         )
       end
 
-      it 'missing_fields?' do
-        expect(csv_importer).to be_missing_fields
+      it 'missing_headers?' do
+        expect(csv_importer).to be_missing_headers
       end
 
-      it 'returns array of missing fields' do
-        expect(csv_importer.missing_fields)
+      it 'returns array of missing headers' do
+        expect(csv_importer.missing_headers)
           .to eq %w(col_missing_1 col_missing_2)
       end
 
-      it 'has a predefined message for missing_fields' do
-        missing_fields_message = 'Field(s) col_missing_1, '\
+      it 'has a predefined message for missing_headers' do
+        missing_headers_message = 'Header(s) col_missing_1, '\
         'col_missing_2 missing in the CSV file spec/fixtures/sample_csv.csv'
-        expect(csv_importer.missing_fields_message).to eq missing_fields_message
+        expect(csv_importer.missing_headers_message)
+          .to eq missing_headers_message
       end
     end
   end
