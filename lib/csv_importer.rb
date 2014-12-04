@@ -22,6 +22,21 @@ module CSVHelper
       )
     end
 
+    def missing_headers
+      # only check the first time the method is called (missing_headers = nil),
+      # after that return the computed result (missing_headers not nil anymore)
+      unless @missing_headers
+        @missing_headers = []
+        csv.read
+        required_headers.each do |required|
+          @missing_headers << required unless csv.headers.include? required
+        end
+        csv.rewind
+        csv
+      end
+      @missing_headers
+    end
+
     def missing_headers?
       !missing_headers.empty?
     end
@@ -34,20 +49,6 @@ module CSVHelper
           " missing in the CSV file #{filename}"
       end
       message
-    end
-
-    def missing_headers
-      # only check first time the method is called (missing_headers = nil)
-      unless @missing_headers
-        @missing_headers = []
-        csv.read
-        required_headers.each do |required|
-          @missing_headers << required unless csv.headers.include? required
-        end
-        csv.rewind
-        csv
-      end
-      @missing_headers
     end
   end
 end
