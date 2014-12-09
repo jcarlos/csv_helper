@@ -6,6 +6,8 @@ group :development do
 end
 
 group :test do
+  gem 'rspec'
+  gem 'guard', require: false
   gem 'guard-rspec', require: false
   gem 'terminal-notifier-guard', require: false
   gem 'simplecov', require: false
